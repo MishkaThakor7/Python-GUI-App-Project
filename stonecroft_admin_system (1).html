@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Stonecroft Heritage Lettings — Administration System</title>
+<style>
+:root{--bg:#f7f4ee;--card:#fff;--line:#e2dccf;--text:#25302a;--muted:#66706a;--primary:#2f4a3c;--accent:#c08a2e;--ok:#5d8a6a;--warn:#c08a2e;--bad:#a8432f;color-scheme:light}
+@media(prefers-color-scheme:dark){:root{--bg:#111915;--card:#19231d;--line:#2a3830;--text:#e8eee9;--muted:#93a198;--primary:#8dbd9d;--accent:#d9ab58;color-scheme:dark}}
+*{box-sizing:border-box}[hidden],.hide{display:none!important}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+h1,h2{font-family:Georgia,"Times New Roman",serif;font-weight:normal;color:var(--primary);margin:0}
+h1{font-size:1.8rem}h2{font-size:1.35rem}
+.muted,small{color:var(--muted)}
+header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.6rem;max-width:900px;margin:0 auto;padding:1rem 1.2rem 0}
+.brand{display:flex;align-items:center;gap:.6rem}.brand b{font-family:Georgia,serif;letter-spacing:3px;text-transform:uppercase;font-size:.85rem;color:var(--primary);display:block;line-height:1.1}
+.logo svg{width:100%;height:100%;display:block}.logo.sm{width:38px;height:38px}.logo.lg{width:96px;height:96px;margin:0 auto 1rem}.logo.md{width:44px;height:44px}
+#steps{display:flex;gap:.3rem}#steps button{background:none;border:0;border-bottom:2px solid transparent;color:var(--muted);font:inherit;font-size:.85rem;padding:.3rem .6rem;cursor:pointer}
+#steps button.on{color:var(--text);border-color:var(--accent)}
+main{max-width:900px;margin:0 auto;padding:1.5rem 1.2rem 4rem}
+.page{display:none;animation:fade .3s}.page.on{display:block}@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.pagehead{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:1.1rem}
+.login{max-width:360px;margin:2rem auto;text-align:center}.login .card{text-align:left;margin-top:1.4rem}
+label{display:block;font-size:.75rem;color:var(--muted);margin:.7rem 0 .2rem}
+input,select,textarea{width:100%;padding:.55rem .7rem;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--text);font:inherit;font-size:.92rem}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--primary);outline-offset:-1px}
+textarea{min-height:70px;resize:vertical}
+.btn{font:inherit;font-size:.85rem;border-radius:8px;padding:.55rem 1.1rem;cursor:pointer;border:1px solid var(--line);background:none;color:var(--text)}
+.btn.solid{background:var(--primary);border-color:var(--primary);color:var(--bg)}.btn:hover{opacity:.85}
+.btns{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1.2rem}.btns .push{margin-left:auto}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
+.cal{user-select:none}.calhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem}
+.calhead button{background:none;border:0;font-size:1.3rem;color:var(--primary);cursor:pointer;padding:0 .5rem}.calhead button:disabled{opacity:.25;cursor:default}
+.calgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center}.calgrid i{font-size:.7rem;color:var(--muted);font-style:normal}
+.calgrid button{border:0;background:none;color:var(--text);border-radius:8px;padding:.35rem 0;cursor:pointer;font:inherit;font-size:.85rem}
+.calgrid button:hover:not(:disabled){background:var(--line)}.calgrid button:disabled{opacity:.25;cursor:default}.calgrid button.on{background:var(--primary);color:var(--bg)}
+.chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.5rem}.chips li{list-style:none;background:var(--bg);border:1px solid var(--line);border-radius:20px;padding:.15rem .3rem .15rem .7rem;font-size:.82rem}
+.chips li button{background:none;border:0;color:var(--muted);cursor:pointer;font-size:1rem}
+.row{display:flex;gap:.5rem}.row input{flex:1}
+fieldset{border:1px solid var(--line);border-radius:10px;padding:.5rem .9rem .8rem;margin:.9rem 0 0}legend{font-size:.75rem;color:var(--muted);padding:0 .3rem}
+fieldset label{display:flex;align-items:center;gap:.5rem;font-size:.9rem;color:var(--text);margin:.35rem 0 0}fieldset input{width:auto}
+.stat{text-align:center}.stat small{display:block;margin-top:.5rem}
+.lcd{display:inline-block;font:2.1rem "Courier New",ui-monospace,monospace;background:#16211b;color:#f0c674;padding:.3rem .9rem;border-radius:8px;letter-spacing:.14em;text-shadow:0 0 6px rgba(240,198,116,.4)}
+.bar{height:10px;background:var(--line);border-radius:10px;overflow:hidden;margin:1rem 0 .3rem}.bar div{height:100%;width:0;background:var(--accent);transition:width .8s cubic-bezier(.22,1,.36,1)}
+.dial{width:124px;height:124px;border-radius:50%;border:2px solid var(--line);background:var(--card);position:relative;margin:.3rem auto;touch-action:none;cursor:grab}.dial:focus{outline:2px solid var(--primary)}
+.knob{position:absolute;inset:16px;border-radius:50%;background:linear-gradient(145deg,#fff,#e1e8e2);box-shadow:0 3px 8px rgba(0,0,0,.2);transition:transform .08s}
+.knob::after{content:"";position:absolute;left:50%;top:6px;width:3px;height:16px;margin-left:-1.5px;background:var(--primary);border-radius:2px}
+.tick{position:absolute;left:50%;top:50%;width:2px;height:6px;margin:-3px 0 0 -1px;background:var(--muted)}
+.tabs{display:flex;gap:.4rem;flex-wrap:wrap;align-items:center;margin-bottom:.8rem}.tabs .btn.on{background:var(--text);color:var(--bg)}.tabs input{flex:1;min-width:160px}
+table{width:100%;border-collapse:collapse;font-size:.86rem}th{text-align:left;font-weight:600;color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--line);padding:.4rem .5rem}
+td{padding:.55rem .5rem;border-bottom:1px solid var(--line)}tr:last-child td{border:0}td button{background:none;border:0;color:var(--muted);cursor:pointer;font-size:1.1rem}
+.empty{text-align:center;color:var(--muted);padding:1.6rem;font-style:italic}
+.wrap{overflow-x:auto}
+#modal{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;padding:1rem;z-index:9}#modal.on{display:flex}
+#modal div{background:var(--card);border-radius:14px;padding:1.4rem;max-width:340px;width:100%;box-shadow:0 12px 40px rgba(0,0,0,.3)}#modal h2{margin-bottom:.4rem}#modal p{margin:0 0 1rem}
+/* Finishing touches */
+body::before{content:"";display:block;height:4px;background:linear-gradient(90deg,var(--primary),var(--accent))}
+.pagehead h2::after{content:"";display:block;width:36px;height:2px;background:var(--accent);margin-top:.35rem}
+.hint{font-size:.78rem;text-align:center;margin:.9rem 0 0}
+
+body{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><span class="logo sm"></span><div><b>Stonecroft</b><small>Heritage Lettings</small></div></div>
+  <nav id="steps" class="hide"><button data-go="1">Register</button><button data-go="2">Enquiries</button><button data-go="3">Dashboard</button></nav>
+</header>
+<main>
+
+<!-- PAGE 1: LOGIN -->
+<section class="page on" id="p0">
+  <div class="login">
+    <span class="logo lg"></span>
+    <h1>Welcome back</h1><p class="muted">Sign in to the administration system.</p>
+    <div class="card">
+      <label for="user">Username</label><input id="user" autocomplete="off">
+      <label for="pass">Password</label><input id="pass" type="password">
+      <div class="btns"><button class="btn solid" id="loginBtn">Login</button><button class="btn" id="cancelBtn">Cancel</button></div>
+    </div>
+    <p class="muted hint">Demo login: <b>demo</b> / <b>heritage123</b></p>
+  </div>
+</section>
+
+<!-- PAGE 2: PROPERTY REGISTER -->
+<section class="page" id="p1">
+  <div class="pagehead"><h2>Property register</h2><span class="logo md"></span></div>
+  <div class="cols">
+    <div class="card">
+      <label>Property name</label><input id="pName">
+      <label>Address</label><input id="pAddr">
+      <div class="two">
+        <div><label>Heritage grade</label><select id="pGrade"><option>Grade I</option><option>Grade IIA</option><option>Grade IIB</option><option>Grade IIIC</option></select></div>
+        <div><label>Style</label><select id="pStyle"><option>Cape Dutch</option><option>Victorian</option><option>Edwardian</option><option>Art Deco</option></select></div>
+      </div>
+      <label>Monthly rent (R)</label><input id="pRent" type="number" min="0" step="250" value="0">
+      <label>Description</label><textarea id="pDesc" placeholder="Heritage features and condition…"></textarea>
+    </div>
+    <div class="card">
+      <label style="margin-top:0">Available from</label>
+      <div class="cal" id="cal"></div><small id="calOut"></small>
+      <label>Standout features</label>
+      <div class="row"><input id="fIn" placeholder="e.g. Yellowwood floors"><button class="btn" id="fAdd">Add</button></div>
+      <ul class="chips" id="fList" style="padding:0;margin:.5rem 0 0"></ul>
+    </div>
+  </div>
+  <div class="btns"><button class="btn solid" id="saveP">Save property</button><button class="btn" id="clearP">Clear form</button><button class="btn push" data-go="2">Next →</button></div>
+</section>
+
+<!-- PAGE 3: TENANT ENQUIRIES -->
+<section class="page" id="p2">
+  <div class="pagehead"><h2>Tenant enquiries</h2><span class="logo md"></span></div>
+  <div class="cols">
+    <div class="card">
+      <label style="margin-top:0">Tenant name</label><input id="tName" placeholder="Full name">
+      <label>Contact</label><input id="tContact" placeholder="Phone or email">
+      <div class="two">
+        <div><label>Viewing date &amp; time</label><input id="tWhen" type="datetime-local"></div>
+        <div><label>Occupants</label><input id="tOcc" type="number" min="1" max="12" value="1"></div>
+      </div>
+    </div>
+    <div class="card" style="padding-top:.4rem">
+      <fieldset><legend>Move-in urgency</legend>
+        <label><input type="radio" name="urg" value="Immediate">Immediate</label>
+        <label><input type="radio" name="urg" value="Within 1 month" checked>Within 1 month</label>
+        <label><input type="radio" name="urg" value="Within 3 months">Within 3 months</label></fieldset>
+      <fieldset><legend>Desired amenities</legend>
+        <label><input type="checkbox" value="Garden">Garden</label><label><input type="checkbox" value="Parking">Parking</label>
+        <label><input type="checkbox" value="Pet-friendly">Pet-friendly</label><label><input type="checkbox" value="Furnished">Furnished</label></fieldset>
+    </div>
+  </div>
+  <div class="btns"><button class="btn" data-go="1">← Back</button><button class="btn solid" id="bookT">Book viewing</button><button class="btn push" data-go="3">Next →</button></div>
+</section>
+
+<!-- PAGE 4: DASHBOARD -->
+<section class="page" id="p3">
+  <div class="pagehead"><h2>Dashboard &amp; reports</h2><span class="logo md"></span></div>
+  <div class="cols" style="grid-template-columns:repeat(auto-fit,minmax(190px,1fr))">
+    <div class="card stat"><div class="dial" id="dial" tabindex="0" role="slider" aria-valuemin="0" aria-valuemax="15"><div class="knob" id="knob"></div></div><small id="dialOut"></small></div>
+    <div class="card stat"><span class="lcd" id="lcdCount">000</span><small>Properties under management</small></div>
+    <div class="card stat"><span class="lcd" id="lcdClock">00:00:00</span><small>Current time</small></div>
+    <div class="card stat"><b id="pctOut" style="font:2rem Georgia,serif;color:var(--primary)">0%</b><div class="bar"><div id="pctBar"></div></div><small>Viewing interest</small></div>
+  </div>
+  <div class="card" style="margin-top:1rem">
+    <div class="tabs"><button class="btn on" data-tab="properties">Properties</button><button class="btn" data-tab="bookings">Viewings</button><input id="search" type="search" placeholder="Search…"></div>
+    <div class="wrap"><table id="tbl"></table></div>
+  </div>
+  <div class="btns"><button class="btn" data-go="2">← Back</button><button class="btn" id="sample">Load sample data</button><button class="btn" id="export">Export report</button><button class="btn solid push" id="exitBtn">Sign out</button></div>
+</section>
+</main>
+
+<div id="modal"><div><h2 id="mT"></h2><p id="mM"></p><button class="btn solid" id="mOk">OK</button></div></div>
+
+
+<script>
+// Demo login. Change these before using the app for anything real.
+// (This check runs in the browser, so it is not real security.)
+const USERNAME = "demo", PASSWORD = "heritage123";
+
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let db = { properties: [], bookings: [] }, logged = false, features = [], tab = "properties";
+try { const s = localStorage.getItem("stonecroft_v1"); if (s) db = JSON.parse(s); } catch (e) {}
+const save = () => { try { localStorage.setItem("stonecroft_v1", JSON.stringify(db)); } catch (e) {} };
+
+/* ---------- logo ---------- */
+const LOGO = `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="var(--card)" stroke="var(--primary)" stroke-width="2.5"/><circle cx="50" cy="50" r="41" fill="none" stroke="var(--primary)" stroke-width=".8"/><path d="M29 68V46c0-7 5-6 8-12 3-7 9-9 13-14 4 5 10 7 13 14 3 6 8 5 8 12v22z" fill="var(--primary)"/><circle cx="50" cy="31" r="2.6" fill="var(--accent)"/><path d="M45 68V58c0-6 10-6 10 0v10z" fill="var(--card)"/><rect x="33" y="52" width="6" height="8" rx="1" fill="var(--card)"/><rect x="61" y="52" width="6" height="8" rx="1" fill="var(--card)"/><rect x="25" y="68" width="50" height="2.5" fill="var(--primary)"/></svg>`;
+$$(".logo").forEach(e => e.innerHTML = LOGO);
+
+/* ---------- modal (like a QMessageBox) ---------- */
+let after = null;
+function box(title, msg, cb) { $("#mT").textContent = title; $("#mM").textContent = msg; after = cb || null; $("#modal").classList.add("on"); $("#mOk").focus(); }
+$("#mOk").onclick = () => { $("#modal").classList.remove("on"); if (after) { const f = after; after = null; f(); } };
+
+/* ---------- page switching (like a QStackedWidget) ---------- */
+function go(n) {
+  if (n > 0 && !logged) return;
+  $$(".page").forEach((p, i) => p.classList.toggle("on", i === n));
+  $$("#steps button").forEach(b => b.classList.toggle("on", +b.dataset.go === n));
+  if (n === 3) refreshDashboard();
+  window.scrollTo(0, 0);
+}
+$$("[data-go]").forEach(b => b.addEventListener("click", () => go(+b.dataset.go)));
+
+/* ---------- page 1: login ---------- */
+$("#loginBtn").onclick = () => {
+  if ($("#user").value.trim().toLowerCase() === USERNAME.toLowerCase() && $("#pass").value === PASSWORD) {
+    logged = true; $("#steps").classList.remove("hide");
+    $("#user").value = $("#pass").value = "";
+    box("Login successful", "Welcome back to Stonecroft Heritage Lettings.", () => go(1));
+  } else { box("Login failed", "Incorrect username or password. Please try again."); $("#pass").value = ""; }
+};
+$("#cancelBtn").onclick = () => { $("#user").value = $("#pass").value = ""; };
+$("#pass").addEventListener("keydown", e => { if (e.key === "Enter") $("#loginBtn").click(); });
+
+/* ---------- page 2: calendar ---------- */
+const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+const today = new Date(); today.setHours(0, 0, 0, 0);
+let cy = today.getFullYear(), cm = today.getMonth(), sel = new Date(today);
+const fmt = d => d.toLocaleDateString("en-ZA", { day: "2-digit", month: "long", year: "numeric" });
+function drawCal() {
+  const start = (new Date(cy, cm, 1).getDay() + 6) % 7, days = new Date(cy, cm + 1, 0).getDate();
+  let h = `<div class="calhead"><button type="button" id="cPrev" ${cy === today.getFullYear() && cm === today.getMonth() ? "disabled" : ""}>‹</button><b>${MONTHS[cm]} ${cy}</b><button type="button" id="cNext">›</button></div><div class="calgrid">`;
+  h += ["Mo","Tu","We","Th","Fr","Sa","Su"].map(d => `<i>${d}</i>`).join("") + "<span></span>".repeat(start);
+  for (let d = 1; d <= days; d++) {
+    const dt = new Date(cy, cm, d);
+    h += `<button type="button" data-d="${d}" class="${dt.getTime() === sel.getTime() ? "on" : ""}" ${dt < today ? "disabled" : ""}>${d}</button>`;
+  }
+  $("#cal").innerHTML = h + "</div>";
+  $("#calOut").textContent = "Available from " + fmt(sel);
+  $("#cPrev").onclick = () => { cm--; if (cm < 0) { cm = 11; cy--; } drawCal(); };
+  $("#cNext").onclick = () => { cm++; if (cm > 11) { cm = 0; cy++; } drawCal(); };
+  $$("#cal [data-d]").forEach(b => b.onclick = () => { sel = new Date(cy, cm, +b.dataset.d); drawCal(); });
+}
+drawCal();
+
+/* ---------- page 2: features + save ---------- */
+function drawFeatures() {
+  $("#fList").innerHTML = features.map((f, i) => `<li>${esc(f)}<button type="button" data-i="${i}" title="Remove">×</button></li>`).join("");
+  $$("#fList button").forEach(b => b.onclick = () => { features.splice(+b.dataset.i, 1); drawFeatures(); });
+}
+function addFeature() {
+  const v = $("#fIn").value.trim();
+  if (!v) return box("No feature entered", "Type a heritage feature (e.g. Yellowwood floors) before adding it.");
+  features.push(v); $("#fIn").value = ""; drawFeatures(); $("#fIn").focus();
+}
+$("#fAdd").onclick = addFeature;
+$("#fIn").addEventListener("keydown", e => { if (e.key === "Enter") addFeature(); });
+function clearP() {
+  ["#pName", "#pAddr", "#pDesc"].forEach(s => $(s).value = ""); $("#pRent").value = 0;
+  $("#pGrade").selectedIndex = $("#pStyle").selectedIndex = 0; features = []; drawFeatures();
+  sel = new Date(today); cy = today.getFullYear(); cm = today.getMonth(); drawCal();
+}
+$("#clearP").onclick = clearP;
+$("#saveP").onclick = () => {
+  const name = $("#pName").value.trim(), addr = $("#pAddr").value.trim();
+  if (!name || !addr) return box("Missing information", "Please enter at least a property name and address.");
+  db.properties.push({ name, address: addr, grade: $("#pGrade").value, style: $("#pStyle").value, rent: +$("#pRent").value || 0,
+    available: sel.toISOString().slice(0, 10), description: $("#pDesc").value.trim(), features: [...features] });
+  save(); clearP(); box("Property saved", `“${name}” has been added to the register.`);
+};
+
+/* ---------- page 3: bookings ---------- */
+function setDefaultWhen() {
+  const d = new Date(Date.now() + 864e5); d.setMinutes(0, 0, 0);
+  const p = n => String(n).padStart(2, "0");
+  const iso = x => `${x.getFullYear()}-${p(x.getMonth() + 1)}-${p(x.getDate())}T${p(x.getHours())}:${p(x.getMinutes())}`;
+  $("#tWhen").min = iso(new Date()); $("#tWhen").value = iso(d);
+}
+setDefaultWhen();
+$("#bookT").onclick = () => {
+  const name = $("#tName").value.trim(), contact = $("#tContact").value.trim();
+  if (!name || !contact) return box("Missing information", "Please enter a tenant name and a contact detail.");
+  if (!$("#tWhen").value) return box("Missing information", "Please choose a viewing date and time.");
+  db.bookings.push({ tenant: name, contact, viewing: $("#tWhen").value.replace("T", " "), occupants: +$("#tOcc").value || 1,
+    urgency: $("input[name=urg]:checked").value, amenities: $$("fieldset input[type=checkbox]:checked").map(c => c.value).join(", ") || "None" });
+  save(); $("#tName").value = $("#tContact").value = ""; $("#tOcc").value = 1;
+  $$("fieldset input[type=checkbox]").forEach(c => c.checked = false); setDefaultWhen();
+  box("Viewing booked", `Viewing booked for ${name}.`);
+};
+
+/* ---------- page 4: dial, LCDs, progress, table ---------- */
+const dial = $("#dial"); let dv = 8, dragging = false;
+for (let i = 0; i <= 15; i++) { const t = document.createElement("div"); t.className = "tick"; t.style.transform = `rotate(${-135 + i * 18}deg) translateY(-56px)`; dial.appendChild(t); }
+function setDial(v) {
+  dv = Math.max(0, Math.min(15, v));
+  $("#knob").style.transform = `rotate(${-135 + dv * 18}deg)`;
+  $("#dialOut").textContent = `Rent escalation: ${dv}%`; dial.setAttribute("aria-valuenow", dv);
+}
+function dialFrom(e) {
+  const r = dial.getBoundingClientRect();
+  let a = Math.atan2(e.clientX - (r.left + r.width / 2), -(e.clientY - (r.top + r.height / 2))) * 180 / Math.PI;
+  setDial(Math.round((Math.max(-135, Math.min(135, a)) + 135) / 18));
+}
+dial.addEventListener("pointerdown", e => { dragging = true; dial.setPointerCapture(e.pointerId); dialFrom(e); });
+dial.addEventListener("pointermove", e => { if (dragging) dialFrom(e); });
+dial.addEventListener("pointerup", () => dragging = false);
+dial.addEventListener("keydown", e => { if (e.key === "ArrowRight" || e.key === "ArrowUp") setDial(dv + 1); if (e.key === "ArrowLeft" || e.key === "ArrowDown") setDial(dv - 1); });
+setDial(8);
+
+setInterval(() => { $("#lcdClock").textContent = new Date().toTimeString().slice(0, 8); }, 1000);
+$("#lcdClock").textContent = new Date().toTimeString().slice(0, 8);
+
+const COLS = {
+  properties: [["Name", "name"], ["Address", "address"], ["Grade", "grade"], ["Rent", p => "R" + p.rent.toLocaleString("en-ZA")], ["Available", "available"]],
+  bookings: [["Tenant", "tenant"], ["Contact", "contact"], ["Viewing", "viewing"], ["Urgency", "urgency"], ["Occupants", "occupants"]]
+};
+function drawTable() {
+  const cols = COLS[tab], q = $("#search").value.trim().toLowerCase();
+  const rows = db[tab].map((r, i) => [r, i]).filter(([r]) => JSON.stringify(r).toLowerCase().includes(q));
+  const cell = (c, r) => esc(typeof c[1] === "function" ? c[1](r) : r[c[1]]);
+  $("#tbl").innerHTML = rows.length
+    ? `<tr>${cols.map(c => `<th>${c[0]}</th>`).join("")}<th></th></tr>` + rows.map(([r, i]) =>
+        `<tr>${cols.map(c => `<td>${cell(c, r)}</td>`).join("")}<td><button data-i="${i}" title="Remove">×</button></td></tr>`).join("")
+    : `<tr><td class="empty">${db[tab].length ? "No matches." : "Nothing here yet."}</td></tr>`;
+  $$("#tbl button").forEach(b => b.onclick = () => { if (confirm("Remove this entry?")) { db[tab].splice(+b.dataset.i, 1); save(); refreshDashboard(); } });
+}
+function refreshDashboard() {
+  $("#lcdCount").textContent = String(db.properties.length).padStart(3, "0");
+  const pct = db.properties.length ? Math.min(100, Math.round(db.bookings.length / db.properties.length * 100)) : 0;
+  $("#pctOut").textContent = pct + "%"; $("#pctBar").style.width = pct + "%";
+  drawTable();
+}
+$$("[data-tab]").forEach(b => b.onclick = () => { tab = b.dataset.tab; $$("[data-tab]").forEach(x => x.classList.toggle("on", x === b)); drawTable(); });
+$("#search").addEventListener("input", drawTable);
+
+$("#sample").onclick = () => {
+  if (!db.properties.some(p => p.name === "Doornbosch Werf House")) db.properties.push(
+    { name: "Doornbosch Werf House", address: "22 Dorp Street, Stellenbosch", grade: "Grade I", style: "Cape Dutch", rent: 24750, available: "2026-12-01", description: "Restored werf homestead.", features: ["Reed ceiling", "Teak shutters"] },
+    { name: "The Tanner’s Row House", address: "9 Bree Street, Makhanda", grade: "Grade IIB", style: "Edwardian", rent: 11300, available: "2026-12-15", description: "Cast-iron balcony, stinkwood staircase.", features: ["Cast-iron balcony"] });
+  if (!db.bookings.some(b => b.tenant === "Kagiso Mahlangu")) db.bookings.push(
+    { tenant: "Kagiso Mahlangu", contact: "071 926 4408", viewing: "2026-12-03 10:00", occupants: 2, urgency: "Within 3 months", amenities: "Garden, Furnished" });
+  save(); refreshDashboard();
+};
+
+$("#export").onclick = async () => {
+  const L = ["STONECROFT HERITAGE LETTINGS — REPORT", "=".repeat(40), "", `Properties registered: ${db.properties.length}`,
+    ...db.properties.map(p => `  - ${p.name} (${p.address}), ${p.grade}, R${p.rent}`), "", `Viewings booked: ${db.bookings.length}`,
+    ...db.bookings.map(b => `  - ${b.tenant} on ${b.viewing} (${b.urgency})`), "", `Projected rent escalation: ${dv}%`, `Viewing interest: ${$("#pctOut").textContent}`];
+  const text = L.join("\n");
+  // On a shared link the viewer app handles saving; opened as a local file we download directly.
+  let dl = null;
+  try { dl = window.claude ? await window.claude.use("downloads") : null; } catch (e) {}
+  if (dl) { try { await dl.save({ filename: "stonecroft_report.txt", data: text }); } catch (e) {} return; }
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([text], { type: "text/plain" })); a.download = "stonecroft_report.txt"; a.click();
+  URL.revokeObjectURL(a.href);
+};
+$("#exitBtn").onclick = () => { logged = false; $("#steps").classList.add("hide"); go(0); };
+</script>
+</body>
+</html>
